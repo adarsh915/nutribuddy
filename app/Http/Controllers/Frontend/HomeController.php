@@ -14,7 +14,13 @@ class HomeController extends Controller
             ->limit(3)
             ->get();
 
-        return view('pages.index', compact('featuredProducts'));
+        $featuredIngredients = \App\Models\Ingredient::where('is_active', true)
+            ->where('is_featured', true)
+            ->with('benefits')
+            ->orderBy('sort_order')
+            ->get();
+
+        return view('pages.index', compact('featuredProducts', 'featuredIngredients'));
     }
 
     public function calendar()

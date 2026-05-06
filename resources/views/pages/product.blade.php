@@ -952,6 +952,162 @@
 
     </section>
 
+    <!-- ════════════════════════════════════════════════
+             NUTRIBUDDY INGREDIENT SECTION
+        ════════════════════════════════════════════════ -->
+    @if($product->ingredients->isNotEmpty())
+    <section id="nb-ingredients">
+
+        <!-- Mesh BG -->
+        <div class="nb-mesh">
+            <div class="nb-blob nb-blob-1"></div>
+            <div class="nb-blob nb-blob-2"></div>
+            <div class="nb-blob nb-blob-3"></div>
+            <div class="nb-blob nb-blob-4"></div>
+            <!-- Stars -->
+            <div class="nb-star" style="width:3px;height:3px;top:12%;left:8%;--dur:5s;--del:0s"></div>
+            <div class="nb-star" style="width:4px;height:4px;top:28%;left:22%;--dur:7s;--del:1s"></div>
+            <div class="nb-star" style="width:2px;height:2px;top:55%;left:75%;--dur:4s;--del:.5s"></div>
+            <div class="nb-star" style="width:5px;height:5px;top:78%;left:90%;--dur:8s;--del:2s"></div>
+            <div class="nb-star" style="width:3px;height:3px;top:40%;left:5%;--dur:6s;--del:1.5s"></div>
+            <div class="nb-star" style="width:4px;height:4px;top:90%;left:40%;--dur:5s;--del:3s"></div>
+            <div class="nb-star" style="width:2px;height:2px;top:18%;left:88%;--dur:9s;--del:.8s"></div>
+            <div class="nb-star" style="width:3px;height:3px;top:65%;left:52%;--dur:6s;--del:2.5s"></div>
+        </div>
+
+        <!-- ── Header ── -->
+        <div class="nb-ing-header">
+            <div class="nb-eyebrow">🔬 Ingredient Transparency</div>
+            <h2 class="nb-ing-title">
+                What Goes Into Every<br>
+                <span class="nb-acc-ye">{{ $product->name }}</span> <span class="nb-acc-pk">Gummy?</span>
+            </h2>
+            <p class="nb-ing-sub">Every single ingredient explained — from ancient Ayurvedic herbs to essential vitamins
+                and
+                minerals. Click any ingredient to learn its full story.</p>
+        </div>
+
+        <!-- ── Category Filter (desktop) ── -->
+        @php
+            $productIngredients = $product->ingredients ?? collect();
+
+            // Build category filters
+            $categoryFilters = $productIngredients->groupBy(function($ing) {
+                return $ing->category->name ?? 'General';
+            })->map(function($group, $name) {
+                return [
+                    'key'       => \Illuminate\Support\Str::slug($name),
+                    'name'      => $name,
+                    'count'     => $group->count(),
+                    'dot_color' => 'rgba(0,214,143,.6)',
+                ];
+            })->values();
+
+            $totalIngredientCount = $productIngredients->count();
+
+            // Build ingredient items for JS
+            $ingredientItems = $productIngredients->map(function($ing) {
+                return [
+                    'id'          => $ing->id,
+                    'name'        => $ing->main_heading,
+                    'shortName'   => $ing->short_heading,
+                    'cat'         => \Illuminate\Support\Str::slug($ing->category->name ?? 'general'),
+                    'catLabel'    => $ing->category->name ?? 'General',
+                    'image'       => $ing->icon_path ? asset('storage/' . $ing->icon_path) : asset('img/gradient1.webp'),
+                    'latin'       => $ing->dosage_heading_one ?? '',
+                    'dosage'      => $ing->dosage_heading_two ?? '',
+                    'desc'        => $ing->description ?? '',
+                    'benefits'    => $ing->benefits->pluck('heading')->toArray(),
+                ];
+            })->values();
+
+            // Summary stats
+            $ingredientSummaryStats = [
+                ['value' => $totalIngredientCount, 'label' => 'Active Ingredients', 'color' => '#00d68f'],
+                ['value' => $productIngredients->where('category.name', '!=', null)->groupBy('ingredient_category_id')->count(), 'label' => 'Ingredient Categories', 'color' => '#ff8c00'],
+                ['value' => '100%', 'label' => 'Natural Sources', 'color' => '#00bfff'],
+                ['value' => '3rd Party', 'label' => 'Lab Tested', 'color' => '#ff4d8f'],
+            ];
+        @endphp
+        <div class="nb-cat-row">
+            <button class="nb-cat-pill nb-active" onclick="nbFilter('all',this)">
+                <span class="nb-cat-dot" style="background:rgba(255,255,255,.5)"></span>All ({{ $totalIngredientCount }})
+            </button>
+            @foreach ($categoryFilters as $filter)
+                <button class="nb-cat-pill" onclick="nbFilter('{{ $filter['key'] }}',this)">
+                    <span class="nb-cat-dot" style="background:{{ $filter['dot_color'] }}"></span>{{ $filter['name'] }} ({{ $filter['count'] }})
+                </button>
+            @endforeach
+        </div>
+
+        <!-- ── Mobile Tabs ── -->
+        <div class="nb-mobile-tabs" id="nbMobTabs">
+            <button class="nb-mob-tab nb-sel-mob" onclick="nbMobFilter('all',this)">All ({{ $totalIngredientCount }})</button>
+            @foreach ($categoryFilters as $filter)
+                <button class="nb-mob-tab" onclick="nbMobFilter('{{ $filter['key'] }}',this)">{{ $filter['name'] }} ({{ $filter['count'] }})</button>
+            @endforeach
+        </div>
+
+        <!-- ── Mobile Accordion Cards ── -->
+        <div class="nb-mob-cards" id="nbMobCards">
+            <!-- Generated by JS -->
+        </div>
+
+        <!-- ── Desktop: Two-column layout ── -->
+        <div class="nb-ing-body">
+
+            <!-- LEFT LIST -->
+            <div class="nb-list-panel">
+                <div class="nb-list-head">
+                    <div class="nb-list-head-icon">📋</div>
+                    <div>
+                        <h4>Full Ingredient List</h4>
+                        <p>{{ $totalIngredientCount }} ingredients · click to explore</p>
+                    </div>
+                </div>
+                <div class="nb-list-scroll" id="nbList">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+
+            <!-- RIGHT DETAIL -->
+            <div class="nb-detail-wrap">
+                <div class="nb-detail-empty" id="nbDetailEmpty">
+                    <div class="nb-empty-ico">🔬</div>
+                    <h3>Select an Ingredient</h3>
+                    <p>Click any ingredient from the list on the left to discover its story, benefits, and why we chose it
+                        for
+                        your child.</p>
+                </div>
+                <div id="nbDetailCards">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+        </div><!-- /nb-ing-body -->
+
+        <!-- ── Summary Bar ── -->
+        <div class="nb-summary-bar">
+            <div class="nb-summary-inner">
+                @foreach ($ingredientSummaryStats as $stat)
+                    <div class="nb-stat">
+                        <div class="nb-stat-n" style="color:{{ $stat['color'] }}">{{ $stat['value'] }}</div>
+                        <div class="nb-stat-l">{{ $stat['label'] }}</div>
+                    </div>
+                    @if (! $loop->last)
+                        <div class="nb-sdiv"></div>
+                    @endif
+                @endforeach
+            </div>
+        </div>
+
+        <script id="nbIngredientsData" type="application/json">@json($ingredientItems)</script>
+
+    </section>
+    @endif
+
+
+    <!-- end ingredients -->
+
    
    
     <!-- ══════════════════════════════════════════

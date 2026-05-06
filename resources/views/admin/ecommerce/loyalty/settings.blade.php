@@ -61,11 +61,11 @@
 
 <div class="row g-4">
     <div class="col-12">
-        <div class="card">
-            <div class="card-header">
+        <div class="card border-0 radius-12 mb-24">
+            <div class="card-header bg-base border-bottom py-16 px-24">
                 <h5 class="card-title mb-0">NB Coins Configuration</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body p-24">
                 @include('admin.ecommerce._messages')
 
                 <form action="{{ route('admin.ecommerce.loyalty.settings.update') }}" method="POST">

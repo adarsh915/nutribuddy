@@ -97,6 +97,11 @@ class Product extends Model
         return $this->hasOne(ProductImage::class)->where('is_primary', true);
     }
 
+    public function ingredients(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Ingredient::class);
+    }
+
     /**
      * Get the price to be displayed on storefront.
      * Includes GST if 'show_in_checkout' is false.

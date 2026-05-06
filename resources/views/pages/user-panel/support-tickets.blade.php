@@ -12,7 +12,7 @@
 
     .panel-tickets .box {
         background: #fff;
-        border: 2px solid var(--border);
+        border: 2px solid #e5e7eb;
         border-radius: 24px;
         overflow: hidden;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
@@ -21,14 +21,14 @@
 
     .panel-tickets .box-head {
         padding: 22px 28px;
-        border-bottom: 2px solid var(--border);
+        border-bottom: 2px solid #e5e7eb;
         background: #fafbfc;
     }
 
     .panel-tickets .box-head h3 {
         font-family: 'Fredoka One', cursive;
         font-size: 1.15rem;
-        color: var(--dk);
+        color: #1f2937;
         margin: 0;
     }
 
@@ -39,7 +39,7 @@
     .panel-tickets label {
         display: block;
         font-weight: 700;
-        color: var(--dk);
+        color: #1f2937;
         margin-bottom: 8px;
         font-size: 0.9rem;
     }
@@ -47,7 +47,7 @@
     .panel-tickets .form-control {
         width: 100%;
         padding: 12px 16px;
-        border: 2px solid var(--border);
+        border: 2px solid #e5e7eb;
         border-radius: 12px;
         font-family: 'Nunito', sans-serif;
         font-size: 0.95rem;
@@ -55,13 +55,13 @@
     }
 
     .panel-tickets .form-control:focus {
-        border-color: var(--primary);
+        border-color: #00a870;
         outline: none;
         box-shadow: 0 0 0 4px rgba(0, 168, 112, 0.1);
     }
 
     .panel-tickets .btn-submit {
-        background: var(--primary);
+        background: #00a870;
         color: #fff;
         border: none;
         padding: 12px 24px;
@@ -73,7 +73,7 @@
     }
 
     .panel-tickets .btn-submit:hover {
-        background: var(--primary-dark);
+        background: #008a5b;
         transform: translateY(-2px);
     }
 
@@ -89,14 +89,14 @@
         font-size: 0.72rem;
         text-transform: uppercase;
         letter-spacing: 1.2px;
-        color: var(--muted);
+        color: #6b7280;
         font-weight: 800;
-        border-bottom: 2px solid var(--border);
+        border-bottom: 2px solid #e5e7eb;
     }
 
     .panel-tickets .orders-table td {
         padding: 20px 28px;
-        border-bottom: 1.5px solid var(--border);
+        border-bottom: 1.5px solid #e5e7eb;
         font-size: 0.88rem;
     }
 
@@ -186,13 +186,17 @@
                                 <th>Status</th>
                                 <th>Priority</th>
                                 <th>Created / Replied</th>
-                                <th>Note from Admin</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($tickets as $ticket)
                                 <tr>
-                                    <td><strong>{{ $ticket->ticket_number }}</strong></td>
+                                    <td>
+                                        <a href="{{ route('user.support-tickets.show', $ticket) }}" style="color: #00a870; text-decoration: none; font-weight: 800;">
+                                            {{ $ticket->ticket_number }}
+                                        </a>
+                                    </td>
                                     <td>{{ $ticket->subject }}</td>
                                     <td>
                                         <span class="status-badge status-{{ strtolower($ticket->status) }}">
@@ -208,17 +212,19 @@
                                         <div style="font-size: 0.8rem;">
                                             Created: {{ $ticket->created_at->format('d M, Y') }}<br>
                                             @if($ticket->last_replied_at)
-                                                <span style="color:var(--primary);">Replied: {{ $ticket->last_replied_at->format('d M, Y') }}</span>
+                                                <span style="color:#00a870;">Replied: {{ $ticket->last_replied_at->format('d M, Y') }}</span>
                                             @endif
                                         </div>
                                     </td>
-                                    <td style="color: var(--text-light); font-size: 0.85rem;">
-                                        {{ $ticket->admin_note ?? 'No notes yet.' }}
+                                    <td>
+                                        <a href="{{ route('user.support-tickets.show', $ticket) }}" style="display: inline-block; padding: 6px 12px; background: #f8f9fa; border: 1px solid #e5e7eb; border-radius: 8px; color: #1f2937; text-decoration: none; font-size: 0.8rem; font-weight: 700;">
+                                            View Chat
+                                        </a>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" style="text-align: center; padding: 40px; color: var(--text-light);">
+                                    <td colspan="6" style="text-align: center; padding: 40px; color: #9ca3af;">
                                         <div style="font-size: 2rem; margin-bottom: 10px;">🎉</div>
                                         You don't have any support tickets yet.
                                     </td>

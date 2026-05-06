@@ -89,6 +89,7 @@ Route::prefix('admin/ecommerce')->name('admin.ecommerce.')->middleware('auth:adm
     Route::get('orders', [AdminOrderController::class, 'index'])->name('orders.index');
     Route::get('orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
     Route::patch('orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.update-status');
+    Route::get('orders/{order}/invoice-download', [UserOrderController::class, 'invoiceDownload'])->name('orders.invoice-download');
 
     Route::get('side-section', [\App\Http\Controllers\Admin\SideSectionController::class, 'index'])->name('side-section.index');
     Route::post('side-section', [\App\Http\Controllers\Admin\SideSectionController::class, 'update'])->name('side-section.update');

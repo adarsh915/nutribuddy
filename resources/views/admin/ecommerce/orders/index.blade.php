@@ -50,7 +50,7 @@
                             <tr>
                                 <td>
                                     <div class="d-flex flex-column">
-                                        <span class="text-md fw-bold text-primary-600">#{{ $order->order_number }}</span>
+                                        <a href="{{ route('admin.ecommerce.orders.show', $order) }}" class="text-md fw-bold text-primary-600 hover-text-primary-700">#{{ $order->order_number }}</a>
                                         <small class="text-secondary-light">{{ optional($order->placed_at)->format('d M Y, H:i') ?? $order->created_at->format('d M Y, H:i') }}</small>
                                     </div>
                                 </td>
@@ -78,7 +78,36 @@
                                 <td>
                                     <span class="fw-bold text-primary-600">INR {{ number_format((float) $order->grand_total, 2) }}</span>
                                 </td>
-                                <td><span class="badge bg-secondary-100 text-secondary-600">{{ $order->items_count }} Items</span></td>
+                                <td>
+                                    @foreach ($order->items as $item)
+                                        <div class="mb-2 pb-1 {{ !$loop->last ? 'border-bottom border-secondary-light border-dashed' : '' }}">
+                                            <div class="d-flex align-items-start justify-content-between gap-2">
+                                                <span class="text-xs fw-bold text-dark" style="line-height: 1.2;">{{ $item->product_name }}</span>
+                                                <span class="badge bg-secondary-100 text-secondary-600 text-xs">x{{ $item->quantity }}</span>
+                                            </div>
+                                            
+                                            @php
+                                                $vName = $item->item_snapshot['variant_name'] ?? ($item->productVariant?->name ?? null);
+                                                $product = $item->product;
+                                            @endphp
+                                            
+                                            @if($vName)
+                                                <div class="text-secondary-light" style="font-size: 10px; line-height: 1.2;">{{ $vName }}</div>
+                                            @endif
+                                            
+                                            <div class="d-flex flex-wrap gap-1 mt-1">
+                                                @if($product)
+                                                    @if($product->flavor || $product->flavour)
+                                                        <span class="badge bg-success-100 text-success-600" style="font-size: 9px; padding: 1px 3px;">{{ $product->flavor ?? $product->flavour }}</span>
+                                                    @endif
+                                                    @if($product->pack_size)
+                                                        <span class="badge bg-info-100 text-info-600" style="font-size: 9px; padding: 1px 3px;">{{ $product->pack_size }}</span>
+                                                    @endif
+                                                @endif
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </td>
                                 <td class="text-end">
                                     <div class="d-flex align-items-center justify-content-end gap-2">
                                         <button type="button" class="btn btn-sm btn-outline-success-600 radius-8 d-inline-flex align-items-center gap-1 edit-btn"

@@ -782,7 +782,7 @@
 
 <script>
     function openPrintable() {
-        var url = '{{ route('user.orders.invoice-download', ['order' => $order->id]) }}?print=1';
+        var url = '{{ route('admin.ecommerce.orders.invoice-download', ['order' => $order->id]) }}?print=1';
         window.open(url, '_blank');
     }
 </script>

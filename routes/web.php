@@ -66,7 +66,8 @@ Route::prefix('admin/ecommerce')->name('admin.ecommerce.')->middleware('auth:adm
     Route::resource('blog-posts', AdminBlogPostController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::resource('contact-leads', AdminContactLeadController::class)->only(['index', 'update', 'destroy']);
     Route::resource('newsletter', AdminNewsletterSubscriberController::class)->only(['index', 'store', 'update', 'destroy']);
-    Route::resource('support-tickets', AdminSupportTicketController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('support-tickets', AdminSupportTicketController::class)->only(['index', 'store', 'update', 'destroy', 'show']);
+    Route::post('support-tickets/{support_ticket}/reply', [AdminSupportTicketController::class, 'reply'])->name('support-tickets.reply');
     Route::resource('customers', \App\Http\Controllers\Admin\CustomerController::class);
     Route::resource('reviews', \App\Http\Controllers\Admin\ReviewController::class)->only(['index', 'update', 'destroy']);
     Route::resource('order-returns', \App\Http\Controllers\Admin\OrderReturnController::class)->only(['index', 'show', 'update', 'destroy']);
@@ -217,6 +218,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/wallet', [\App\Http\Controllers\UserWalletController::class, 'index'])->name('wallet');
     Route::get('/support-tickets', [\App\Http\Controllers\UserSupportTicketController::class, 'index'])->name('user.support-tickets');
     Route::post('/support-tickets', [\App\Http\Controllers\UserSupportTicketController::class, 'store'])->name('user.support-tickets.store');
+    Route::get('/support-tickets/{ticket}', [\App\Http\Controllers\UserSupportTicketController::class, 'show'])->name('user.support-tickets.show');
+    Route::post('/support-tickets/{ticket}/reply', [\App\Http\Controllers\UserSupportTicketController::class, 'reply'])->name('user.support-tickets.reply');
     Route::get('/user/reviews', [\App\Http\Controllers\ProductReviewController::class, 'userIndex'])->name('user.reviews.index');
     Route::post('/product/{product}/reviews', [\App\Http\Controllers\ProductReviewController::class, 'store'])->name('reviews.store');
 });

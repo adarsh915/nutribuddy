@@ -7,8 +7,8 @@
 @section('content')
     @include('admin.ecommerce._messages')
 
-    <div class="card mb-24">
-        <div class="card-body">
+    <div class="card border-0 radius-12 mb-24">
+        <div class="card-body p-24">
             <form method="GET" action="{{ route('admin.ecommerce.orders.index') }}" class="row g-3 align-items-end">
                 <div class="col-md-3">
                     <label class="form-label">Filter by Status</label>
@@ -28,11 +28,11 @@
         </div>
     </div>
 
-    <div class="card">
-        <div class="card-header">
+    <div class="card border-0 radius-12 mb-24">
+        <div class="card-header bg-base border-bottom py-16 px-24">
             <h5 class="card-title mb-0">Order List</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body p-24">
             <div class="table-responsive">
                 <table class="table bordered-table mb-0" id="dataTable">
                     <thead>

@@ -730,6 +730,7 @@
     <!-- ════════════════════════════════════════════════
              NUTRIBUDDY INGREDIENT SECTION
         ════════════════════════════════════════════════ -->
+    @if($product->ingredients->isNotEmpty())
     <section id="nb-ingredients">
 
         <!-- Mesh BG -->
@@ -754,7 +755,7 @@
             <div class="nb-eyebrow">🔬 Ingredient Transparency</div>
             <h2 class="nb-ing-title">
                 What Goes Into Every<br>
-                <span class="nb-acc-ye">GrowStrong</span> <span class="nb-acc-pk">Gummy?</span>
+                <span class="nb-acc-ye">{{ $product->name }}</span> <span class="nb-acc-pk">Gummy?</span>
             </h2>
             <p class="nb-ing-sub">Every single ingredient explained — from ancient Ayurvedic herbs to essential vitamins
                 and
@@ -763,10 +764,45 @@
 
         <!-- ── Category Filter (desktop) ── -->
         @php
-            $categoryFilters = $ingredientCategoryFilters ?? collect();
-            $totalIngredientCount = $ingredientTotalCount ?? 0;
-            $ingredientItems = $ingredientItems ?? collect();
-            $ingredientSummaryStats = $ingredientSummaryStats ?? [];
+            $productIngredients = $product->ingredients ?? collect();
+
+            // Build category filters
+            $categoryFilters = $productIngredients->groupBy(function($ing) {
+                return $ing->category->name ?? 'General';
+            })->map(function($group, $name) {
+                return [
+                    'key'       => \Illuminate\Support\Str::slug($name),
+                    'name'      => $name,
+                    'count'     => $group->count(),
+                    'dot_color' => 'rgba(0,214,143,.6)',
+                ];
+            })->values();
+
+            $totalIngredientCount = $productIngredients->count();
+
+            // Build ingredient items for JS
+            $ingredientItems = $productIngredients->map(function($ing) {
+                return [
+                    'id'          => $ing->id,
+                    'name'        => $ing->main_heading,
+                    'shortName'   => $ing->short_heading,
+                    'cat'         => \Illuminate\Support\Str::slug($ing->category->name ?? 'general'),
+                    'catLabel'    => $ing->category->name ?? 'General',
+                    'image'       => $ing->icon_path ? asset('storage/' . $ing->icon_path) : asset('img/gradient1.webp'),
+                    'latin'       => $ing->dosage_heading_one ?? '',
+                    'dosage'      => $ing->dosage_heading_two ?? '',
+                    'desc'        => $ing->description ?? '',
+                    'benefits'    => $ing->benefits->pluck('heading')->toArray(),
+                ];
+            })->values();
+
+            // Summary stats
+            $ingredientSummaryStats = [
+                ['value' => $totalIngredientCount, 'label' => 'Active Ingredients', 'color' => '#00d68f'],
+                ['value' => $productIngredients->where('category.name', '!=', null)->groupBy('ingredient_category_id')->count(), 'label' => 'Ingredient Categories', 'color' => '#ff8c00'],
+                ['value' => '100%', 'label' => 'Natural Sources', 'color' => '#00bfff'],
+                ['value' => '3rd Party', 'label' => 'Lab Tested', 'color' => '#ff4d8f'],
+            ];
         @endphp
         <div class="nb-cat-row">
             <button class="nb-cat-pill nb-active" onclick="nbFilter('all',this)">
@@ -842,6 +878,7 @@
         <script id="nbIngredientsData" type="application/json">@json($ingredientItems)</script>
 
     </section>
+    @endif
 
 
     <!-- end ingredients -->

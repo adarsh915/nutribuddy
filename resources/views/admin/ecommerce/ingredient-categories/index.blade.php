@@ -7,11 +7,11 @@
 @section('content')
     @include('admin.ecommerce._messages')
 
-    <div class="card mb-24">
-        <div class="card-header">
+    <div class="card border-0 radius-12 mb-24">
+        <div class="card-header bg-base border-bottom py-16 px-24">
             <h5 class="card-title mb-0">Create Ingredient Category</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body p-24">
             <form method="POST" action="{{ route('admin.ecommerce.ingredient-categories.store') }}" class="row g-3">
                 @csrf
                 <div class="col-md-4">
@@ -47,11 +47,11 @@
         </div>
     </div>
 
-    <div class="card basic-data-table">
-        <div class="card-header">
+    <div class="card basic-data-table border-0 radius-12 mb-24">
+        <div class="card-header bg-base border-bottom py-16 px-24">
             <h5 class="card-title mb-0">Ingredient Category List</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body p-24">
             <div class="table-responsive">
                 <table class="table bordered-table mb-0" id="dataTable" data-page-length='10'>
                     <thead>

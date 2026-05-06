@@ -22,7 +22,7 @@ class UserSupportTicketController extends Controller
             'message' => 'required|string',
         ]);
 
-        SupportTicket::create([
+        $ticket = SupportTicket::create([
             'ticket_number' => 'TKT-' . strtoupper(Str::random(8)),
             'user_id' => auth()->id(),
             'subject' => $request->subject,
@@ -31,6 +31,44 @@ class UserSupportTicketController extends Controller
             'status' => 'open',
         ]);
 
+        $ticket->messages()->create([
+            'user_id' => auth()->id(),
+            'is_admin' => false,
+            'message' => $request->message,
+        ]);
+
         return redirect()->back()->with('success', 'Support ticket created successfully!');
+    }
+
+    public function show(SupportTicket $ticket)
+    {
+        if ($ticket->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $ticket->load('messages.user');
+
+        return view('pages.user-panel.support-tickets-show', compact('ticket'));
+    }
+
+    public function reply(Request $request, SupportTicket $ticket)
+    {
+        if ($ticket->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $request->validate([
+            'message' => 'required|string',
+        ]);
+
+        $ticket->messages()->create([
+            'user_id' => auth()->id(),
+            'is_admin' => false,
+            'message' => $request->message,
+        ]);
+
+        $ticket->update(['last_replied_at' => now(), 'status' => 'open']);
+
+        return redirect()->back()->with('success', 'Reply sent successfully!');
     }
 }

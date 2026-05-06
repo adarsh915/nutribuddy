@@ -16,14 +16,7 @@
                     <label class="form-label">Email</label>
                     <input type="email" name="email" class="form-control" required>
                 </div>
-                <div class="col-md-3">
-                    <label class="form-label">Name</label>
-                    <input type="text" name="name" class="form-control">
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label">Source</label>
-                    <input type="text" name="source" class="form-control" placeholder="website, popup, campaign">
-                </div>
+
                 <div class="col-md-2">
                     <label class="form-label">Status</label>
                     <select name="status" class="form-select" required>
@@ -112,14 +105,7 @@
                     @csrf
                     @method('PUT')
                     <div class="modal-body">
-                        <div class="mb-3">
-                            <label class="form-label">Name</label>
-                            <input type="text" name="name" id="edit_name" class="form-control">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Source</label>
-                            <input type="text" name="source" id="edit_source" class="form-control">
-                        </div>
+
                         <div class="mb-3">
                             <label class="form-label">Status</label>
                             <select name="status" id="edit_status" class="form-select" required>
@@ -157,8 +143,7 @@
                     const form = editModal.querySelector('#editSubscriberForm');
                     form.setAttribute('action', action);
                     
-                    editModal.querySelector('#edit_name').value = name || '';
-                    editModal.querySelector('#edit_source').value = source || '';
+
                     editModal.querySelector('#edit_status').value = status;
                 });
             }
